@@ -1,0 +1,21 @@
+## 桂林字牌 机器人出牌检测算法模拟
+
+src/Main.java.bak 为本人的算法模拟实现
+src/Main.java 为 DeepStack 辅助改正问题的算法模拟实现
+
+本人的实现存在致命问题，即浅拷贝引用地狱，导致变量被来回修改，最终结果存在极大问题。DeepStack 实现的深拷贝解决了这个问题。
+
+仅仅是简单的几行代码，解决了最让我困惑的问题。
+
+```java
+/**
+ * 深拷贝 tempRes
+ */
+private static List<List<Integer>> deepCopy(List<List<Integer>> tempRes) {
+  List<List<Integer>> newTempRes = new ArrayList<>();
+  for (List<Integer> subList : tempRes) {
+    newTempRes.add(new ArrayList<>(subList));
+  }
+  return newTempRes;
+}
+```

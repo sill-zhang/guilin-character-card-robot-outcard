@@ -1,0 +1,99 @@
+import java.util.*;
+
+class Main {
+
+  private static List<List<List<Integer>>> results = new ArrayList<>();
+
+  public static void main(String[] args) {
+    // List<List<List<Integer>>> results = new ArrayList<>();
+    List<Integer> handCards = Arrays.asList(
+      23, 24, 25, 16, 17, 18, 14, 15, 16, 12, 22, 11, 21, 24
+    );
+    handCards.sort(Integer::compare);
+    System.out.println("sorted handCards: " + handCards);
+    int remainJin = (int) handCards.stream().filter(c -> c.equals(51)).count();
+    match(null, handCards, 0, remainJin, handCards.size());
+    // System.out.println("result before sorted: " + results);
+    // results.sort(new Comparator<List<List<Integer>>>() {
+    //   @Override
+    //   public int compare(List<List<Integer>> o1, List<List<Integer>> o2) {
+    //     // return o1.stream().filter(tc -> tc.size() == 1).count() - o2.stream().filter(tc -> tc.size() == 1).count() >= 0L ? 1 : -1;
+    //     long o1Count = o1.stream().filter(tc -> tc.size() == 1).count();
+    //     long o2Count = o2.stream().filter(tc -> tc.size() == 1).count();
+    //     return Long.compare(o2Count, o1Count);
+    //   }
+    // });
+    System.out.println("final result: " + results);
+  }
+
+  /**
+   * 牌型匹配
+   * @param rCards 剩余牌
+   * @param curr 当前下标
+   * @param remainJin 剩余鬼
+   * @param remainCard 剩余牌数
+   */
+  private static void match(List<List<Integer>> tempRes, List<Integer> rCards, int curr, int remainJin, int remainCard) {
+    // System.out.println("input tempRes: " + tempRes);
+    if (curr == rCards.size()) {
+      // System.out.println("tempRes: " + tempRes);
+      results.add(new ArrayList<>(tempRes));
+      System.out.println("temp results: " + results.get(results.size() - 1));
+      return; 
+    }
+    if (rCards.size() == 0 || remainCard == 0) {
+      // System.out.println("tempRes: " + tempRes);
+      // results.add(new ArrayList<>(tempRes));
+      return;
+    }
+    if (Objects.isNull(tempRes)) {
+      tempRes = new ArrayList<>();
+    } else {
+      boolean cutted = tempRes.stream().filter(tc -> tc.size() == 2).filter(tc -> tc.get(0) + 1 == tc.get(1)).count() > 1L;
+      if (cutted) { // 剪枝
+        // System.out.println("cutted tempRes: " + tempRes);
+        return;
+      }
+    }
+    int currCard = rCards.get(curr);
+    if (tempRes.isEmpty()) {
+      tempRes.add(new ArrayList<>());
+    }
+    List<Integer> latestCombination = tempRes.get(tempRes.size() - 1);
+    if (latestCombination.size() == 3) {
+      tempRes.add(new ArrayList<>());
+      latestCombination = tempRes.get(tempRes.size() - 1);
+    }
+    if (latestCombination.isEmpty()) {
+      latestCombination.add(currCard);
+      match(new ArrayList<>(tempRes), rCards, curr + 1, remainJin, remainCard - 1);
+    } else {
+      if (latestCombination.get(latestCombination.size() - 1) == currCard) { // 对子 或 小带大后两张大牌
+        if (latestCombination.size() == 1 || latestCombination.get(0) + 10 == latestCombination.get(1)) {
+          latestCombination.add(currCard);
+          match(new ArrayList<>(tempRes), rCards, curr + 1, remainJin, remainCard - 1);
+          latestCombination.remove(latestCombination.size() - 1);
+        }
+      } 
+      if (latestCombination.get(latestCombination.size() - 1) + 1 == currCard) { // 普通顺子
+        if (latestCombination.size() == 1 || latestCombination.get(0) + 1 == latestCombination.get(1)) {
+          latestCombination.add(currCard);
+          match(new ArrayList<>(tempRes), rCards, curr + 1, remainJin, remainCard - 1);
+          latestCombination.remove(latestCombination.size() - 1);
+        }
+      } 
+      if (latestCombination.get(latestCombination.size() - 1) + 10 == currCard) { // 大带小
+        latestCombination.add(currCard);
+        match(new ArrayList<>(tempRes), rCards, curr + 1, remainJin, remainCard - 1);
+        latestCombination.remove(latestCombination.size() - 1);
+      } 
+      if ((latestCombination.size() == 1 && latestCombination.get(latestCombination.size() - 1) % 10 == 1 && currCard % 10 == 6) || (latestCombination.size() == 2 && latestCombination.get(latestCombination.size() - 1) % 10 == 6 && currCard % 10 == 9)) { // 二七十
+        latestCombination.add(currCard);
+        match(new ArrayList<>(tempRes), rCards, curr + 1, remainJin, remainCard - 1);
+        latestCombination.remove(latestCombination.size() - 1);
+      }  
+      tempRes.add(new ArrayList<Integer>() {{ add(currCard); }}); // 新的组合(单张)
+      match(new ArrayList<>(tempRes), rCards, curr + 1, remainJin, remainCard - 1);
+    }
+  }
+}
