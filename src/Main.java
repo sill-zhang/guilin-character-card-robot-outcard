@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 class Main {
 
@@ -7,7 +8,8 @@ class Main {
   public static void main(String[] args) {
     long start = System.currentTimeMillis();
     List<Integer> handCards = Arrays.asList(
-        23, 24, 25, 16, 17, 18, 14, 15, 16, 12, 22, 11, 21, 24);
+      23, 24, 25, 16, 17, 18, 16, 14, 15, 12, 22, 11, 21, 14, 10
+    );
     handCards.sort(Integer::compare);
     System.out.println("sorted handCards: " + handCards);
     // in = (int) handCards.stream().filter(c -> c.equals(51)).count();
@@ -27,7 +29,26 @@ class Main {
     System.out.println("best result: " + bestRes);
     List<Integer> shouldOut = bestRes.stream().filter(tc -> tc.size() == 1).findFirst().get();
     if (Objects.nonNull(shouldOut)) { // 存在散牌
-      System.out.println("should out: " + shouldOut);
+      // 散牌中有连续的牌则不优先打
+      List<Integer> straight = bestRes.stream().filter(tc -> tc.size() == 1).map(tc -> tc.get(0)).collect(Collectors.toList());
+      if (straight.size() == 1) {
+        System.out.println("should out: " + straight.get(0));
+        return;
+      } else {
+        straight.sort(Integer::compare);
+        System.out.println("own straight: " + straight);
+        for (int i = 0; i < straight.size(); i += 1) {
+          if (i != straight.size() - 1 && straight.get(i) + 1 == straight.get(i + 1)) {
+            continue;
+          } else if (i != 0 && straight.get(i) - 1 == straight.get(i - 1)) {
+            continue;
+          } else {
+            System.out.println("should out: " + straight.get(i));
+            return;
+          }
+        }
+        System.out.println("should out: " + straight.get(0)); // 否则随便打一张
+      }
     } else { // 不存在散牌，有取舍地打
       // 优先拆普通顺子
       List<Integer> straight = bestRes.stream().filter(tc -> tc.size() == 3).filter(tc -> tc.get(0) + 1 == tc.get(1) && tc.get(0) % 10 != 1).findFirst().get();
@@ -68,6 +89,9 @@ class Main {
   private static void match(List<List<Integer>> tempRes, List<Integer> rCards, int curr,
       int remainCard) {
     if (curr == rCards.size()) {
+      if (tempRes.stream().filter(tc -> tc.size() == 2).filter(tc -> tc.get(0) + 1 == tc.get(1)).count() >= 1L) {
+        return;
+      }
       results.add(deepCopy(tempRes)); // 深拷贝 tempRes 并添加到 results
       System.out.println("temp results: " + results.get(results.size() - 1));
       return;
