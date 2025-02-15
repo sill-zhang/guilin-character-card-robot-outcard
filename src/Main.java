@@ -8,7 +8,7 @@ class Main {
   public static void main(String[] args) {
     long start = System.currentTimeMillis();
     List<Integer> handCards = Arrays.asList(
-      23, 24, 25, 16, 17, 18, 16, 14, 15, 12, 22, 11, 21, 14, 10
+      23, 24, 25, 16, 17, 18, 13, 14, 15, 12, 22, 11, 21, 24
     );
     handCards.sort(Integer::compare);
     System.out.println("sorted handCards: " + handCards);
@@ -96,7 +96,7 @@ class Main {
       System.out.println("temp results: " + results.get(results.size() - 1));
       return;
     }
-    if (rCards.size() == 0 || remainCard == 0) {
+    if (rCards.isEmpty() || remainCard == 0) {
       return;
     }
     if (Objects.isNull(tempRes)) {
