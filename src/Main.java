@@ -8,7 +8,7 @@ class Main {
   public static void main(String[] args) {
     long start = System.currentTimeMillis();
     List<Integer> handCards = Arrays.asList(
-      27, 28, 29, 22, 23, 24, 11, 21, 21, 24, 14, 14, 18, 18, 17, 27, 29, 10
+      23, 24, 25, 16, 17, 18, 13, 14, 15, 12, 22, 11, 21, 24
     );
     handCards.sort(Integer::compare);
     System.out.println("sorted handCards: " + handCards);
@@ -19,7 +19,6 @@ class Main {
     results.sort(new Comparator<List<List<Integer>>>() {
       @Override
       public int compare(List<List<Integer>> o1, List<List<Integer>> o2) {
-        // return o1.stream().filter(tc -> tc.size() == 1).count() - o2.stream().filter(tc -> tc.size() == 1).count() >= 0L ? 1 : -1;
         long o1Count = o1.stream().filter(tc -> tc.size() == 1).count();
         long o2Count = o2.stream().filter(tc -> tc.size() == 1).count();
         return Long.compare(o1Count, o2Count);
