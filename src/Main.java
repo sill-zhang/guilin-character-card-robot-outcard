@@ -22,17 +22,7 @@ class Main {
       public int compare(List<List<Integer>> o1, List<List<Integer>> o2) {
         long o1Count = o1.stream().filter(tc -> tc.size() == 1).count();
         long o2Count = o2.stream().filter(tc -> tc.size() == 1).count();
-        if (o1Count != o2Count) {
           return Long.compare(o1Count, o2Count);
-        }
-        long o1Count2 = o1.stream().filter(tc -> tc.size() == 2).count();
-        long o2Count2 = o2.stream().filter(tc -> tc.size() == 2).count();
-        if (o1Count2 != o2Count2) {
-          return Long.compare(o1Count2, o2Count2);
-        }
-        long o1Count3 = o1.stream().filter(tc -> tc.size() == 3).count();
-        long o2Count3 = o2.stream().filter(tc -> tc.size() == 3).count();
-        return Long.compare(o2Count3, o1Count3);
       }
     });
     System.out.println("final result: " + results);
@@ -108,10 +98,10 @@ class Main {
    */
   private static void match(List<List<Integer>> tempRes, List<Boolean> sign, List<Integer> rCards, int curr, int remainCard) {
     if (rCards.isEmpty() || remainCard == 0) {
-      // if (tempRes.stream().filter(tc -> tc.size() == 2).filter(tc -> 
-      //   tc.get(0) + 1 == tc.get(1) || tc.get(0) % 10 == 1 && tc.get(1) % 10 == 6 || tc.get(0) + 10 == tc.get(1)).count() >= 1L) {
-      //   return;
-      // }
+      if (tempRes.stream().filter(tc -> tc.size() == 2).filter(tc -> 
+        tc.get(0) + 1 == tc.get(1) || tc.get(0) % 10 == 1 && tc.get(1) % 10 == 6 || tc.get(0) + 10 == tc.get(1)).count() >= 1L) {
+        return;
+      }
       if (tempRes.stream().mapToLong(tc -> tc.size()).sum() != rCards.size()) {
         return;
       }
@@ -122,11 +112,11 @@ class Main {
     if (Objects.isNull(tempRes)) {
       tempRes = new ArrayList<>(); 
     } else {
-      // boolean cutted = tempRes.stream().filter(tc -> tc.size() == 2).filter(tc -> 
-      //   tc.get(0) + 1 == tc.get(1) || tc.get(0) % 10 == 1 && tc.get(1) % 10 == 6 || tc.get(0) + 10 == tc.get(1)).count() > 1L;
-      // if (cutted) { // 剪枝
-      //   return;
-      // }
+      boolean cutted = tempRes.stream().filter(tc -> tc.size() == 2).filter(tc -> 
+        tc.get(0) + 1 == tc.get(1) || tc.get(0) % 10 == 1 && tc.get(1) % 10 == 6 || tc.get(0) + 10 == tc.get(1)).count() > 1L;
+      if (cutted) { // 剪枝
+        return;
+      }
     }
     if (Objects.isNull(sign)) {
       sign = new ArrayList<>(Collections.nCopies(rCards.size(), false));
